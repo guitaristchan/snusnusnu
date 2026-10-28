@@ -3,43 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>총장 선거 캠페인 시뮬레이터</title>
+  <title>총장 선거 캠페인 시뮬레이터 청사진</title>
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:ital,wght@0,300..700;1,300..700&family=Google+Sans+Code:ital,wght,MONO@0,300..700,0..1;1,300..700,0..1&display=swap');
 
     :root {
-      --body-bg: #fdfcfc;
       --ff-sans: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --ff-mono: 'Google Sans Code', monospace;
-      
+      --primary: #3186ff;
       --surface-bright: #ffffff;
       --surface-dim: #f2f0f0;
-      --surface-container-high: #e6e6e6;
-      --on-surface: #000000;
-      --on-surface-variant: rgba(0, 0, 0, 0.6);
+      --stroke-default: #2575fc;
+      --on-surface: #1a1a1a;
       
-      --primary: #3186ff;
-      --accent-fixed: #3186ff;
-      --accent-container: #dcf1ff;
-      --stroke-default: #e3e3e3;
-      
-      --positive: #008052;
-      --positive-container: #daf9d4;
-      --error: #de2d29;
-      --error-container: #ffdeec;
-
-      --chart-1: #2575fc;
-      --chart-2: #5b6e9e;
-      --chart-3: #228a49;
-      --chart-4: #62991b;
-      --chart-5: #1e564d;
-      --chart-8: #997112;
-
-      --r-s: 8px;
       --r-m: 12px;
-      --r-l: 16px;
-      --r-full: 999px;
     }
 
     * {
@@ -48,69 +25,311 @@
 
     body {
       margin: 0;
-      padding: 16px;
-      background: var(--body-bg);
+      padding: 0;
       font-family: var(--ff-sans);
       color: var(--on-surface);
+      /* 하얀색 모눈종이(Blueprint) 배경 구현 */
+      background-color: #ffffff;
+      background-image: 
+        linear-gradient(#e0e7ff 1px, transparent 1px),
+        linear-gradient(90deg, #e0e7ff 1px, transparent 1px);
+      background-size: 25px 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
 
-    .widget-container {
+    /* 상단 링크 배너 */
+    .top-banner {
       width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-bottom: 2px solid var(--stroke-default);
+      padding: 12px 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    .campaign-card {
-      background: var(--surface-bright);
-      border-radius: var(--r-l);
-      border: 1px solid var(--stroke-default);
+    .top-banner a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .top-banner a:hover {
+      text-decoration: underline;
+    }
+
+    /* 메인 컨테이너 */
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+    }
+
+    .header-title {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1a365d;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 0px #ffffff;
+    }
+
+    /* 카드 공통 스타일 */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid var(--stroke-default);
+      border-radius: var(--r-m);
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: 4px 4px 0px rgba(37, 117, 252, 0.1);
     }
 
-    .campaign-header {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 16px;
+      text-align: center;
+      border-bottom: 1px dashed var(--primary);
+      padding-bottom: 10px;
     }
 
-    .stepper-nav {
+    /* 3종 키워드 조합 정책 설계 엔진 */
+    .policy-engine .selectors {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .policy-engine select {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--stroke-default);
+      border-radius: 4px;
+      font-family: inherit;
+    }
+
+    .gauges {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--surface-dim);
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .gauge-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 4px;
-      margin-top: 8px;
+      font-weight: 600;
     }
 
-    .step-node {
-      flex: 1;
+    /* 5단계 관문 컷오프 */
+    .step-flow {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 12px;
     }
 
-    .step-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--r-full);
-      background: var(--surface-dim);
-      color: var(--on-surface-variant);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-      transition: all 0.2s ease;
+    .step-box {
+      width: 80%;
+      padding: 12px;
+      text-align: center;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      position: relative;
     }
 
-    .step-node.active .step-badge {
-      background: var(--accent-fixed);
-      color: #ffffff;
+    .step-box::after {
+      content: '▼';
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--primary);
+      font-size: 12px;
+    }
+    .step-box:last-child::after {
+      display: none;
     }
 
-    .step-node.completed .step-badge {
-      background: var(--accent-container);
+    /* 트레이드오프 기반 딜레마 제어 */
+    .dilemma-control button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 8px;
+      border: 1px solid var(--stroke-default);
+      background: white;
+      color: var(--primary);
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .dilemma-control button:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .status-bar {
+      margin-top: 15px;
+    }
+    
+    .status-bar div {
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .bar-bg {
+      width: 100%;
+      height: 12px;
+      background: #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      transition: width 0.3s;
+    }
+
+    /* 모바일 반응형 처리 */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 연결 링크 (사용자 요청 반영) -->
+  <div class="top-banner">
+    <a href="https://guitaristchan.github.io/snusnusnu/" target="_blank">
+      🚀 제29대 서울대학교 총장 후보자 시뮬레이션 게임 플레이하기 (클릭 시 이동)
+    </a>
+  </div>
+
+  <div class="container">
+    <div class="header-title">시스템 아키텍처 V1.0</div>
+
+    <!-- 1. 3종 키워드 조합 정책 설계 엔진 -->
+    <div class="card policy-engine">
+      <h3 class="card-title">3종 키워드 조합 정책 설계</h3>
+      <div class="selectors">
+        <select id="res">
+          <option value="10">예산 확보</option>
+          <option value="-5">재원 축소</option>
+        </select>
+        <select id="target">
+          <option value="prof">교수 대상</option>
+          <option value="student">학생 대상</option>
+        </select>
+        <select id="act">
+          <option value="15">적극 실행</option>
+          <option value="5">현상 유지</option>
+        </select>
+      </div>
+      <button onclick="calculatePolicy()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer; margin-bottom:16px;">정책 적용하기</button>
+      
+      <div class="gauges">
+        <div class="gauge-item">
+          <span>교수 지지율 (76%)</span>
+          <span id="score-prof" style="color: var(--primary);">50%</span>
+        </div>
+        <div class="gauge-item">
+          <span>직원 지지율 (14%)</span>
+          <span id="score-staff" style="color: var(--primary);">40%</span>
+        </div>
+        <div class="gauge-item">
+          <span>학생 지지율 (10%)</span>
+          <span id="score-student" style="color: var(--primary);">30%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 5단계 관문 컷오프 -->
+    <div class="card">
+      <h3 class="card-title">5단계 관문 & 26% 컷오프</h3>
+      <div class="step-flow">
+        <div class="step-box" style="opacity: 1;">1단계 예비심사 (Top 4)</div>
+        <div class="step-box" style="opacity: 0.8;">2단계 평가단 투표 (26% 생존선)</div>
+        <div class="step-box" style="opacity: 0.6;">3단계 정책 결정</div>
+        <div class="step-box" style="opacity: 0.4;">4단계 학생회 면담</div>
+        <div class="step-box" style="opacity: 0.2;">5단계 이사회 면접 (8표 이상)</div>
+      </div>
+    </div>
+
+    <!-- 3. 트레이드오프 기반 딜레마 제어 -->
+    <div class="card dilemma-control">
+      <h3 class="card-title">트레이드오프 딜레마 제어</h3>
+      <p style="font-size: 0.9rem; text-align: center; margin-bottom: 15px;">돌발 딜레마 발생! 당신의 선택은?</p>
+      
+      <button onclick="handleDilemma('accept')">수용 (지지율 상승, 스트레스 상승)</button>
+      <button onclick="handleDilemma('reject')">거절 (지지율 하락, 스트레스 하락)</button>
+      <button onclick="handleDilemma('hide')">은폐 (위험도 대폭 상승)</button>
+
+      <div class="status-bar">
+        <div>지지율 방어 <span id="val-support">50</span>%</div>
+        <div class="bar-bg">
+          <div id="bar-support" class="bar-fill" style="width: 50%; background: #228a49;"></div>
+        </div>
+      </div>
+      <div class="status-bar">
+        <div>후보자 스트레스 수치 <span id="val-stress">20</span>%</div>
+        <div class="bar-bg">
+          <div id="bar-stress" class="bar-fill" style="width: 20%; background: #de2d29;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 인터랙티브 기능 시뮬레이션 스크립트
+    function calculatePolicy() {
+      // 랜덤하게 지지율 변화 (시각적 효과)
+      document.getElementById('score-prof').innerText = Math.floor(Math.random() * 50 + 50) + '%';
+      document.getElementById('score-staff').innerText = Math.floor(Math.random() * 50 + 30) + '%';
+      document.getElementById('score-student').innerText = Math.floor(Math.random() * 50 + 20) + '%';
+    }
+
+    let support = 50;
+    let stress = 20;
+
+    function handleDilemma(choice) {
+      if(choice === 'accept') {
+        support = Math.min(100, support + 15);
+        stress = Math.min(100, stress + 20);
+      } else if(choice === 'reject') {
+        support = Math.max(0, support - 10);
+        stress = Math.max(0, stress - 15);
+      } else {
+        stress = Math.min(100, stress + 40);
+      }
+      
+      document.getElementById('val-support').innerText = support;
+      document.getElementById('bar-support').style.width = support + '%';
+      
+      document.getElementById('val-stress').innerText = stress;
+      document.getElementById('bar-stress').style.width = stress + '%';
+    }
+  </script>
+</body>
+</html>
